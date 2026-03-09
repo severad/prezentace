@@ -94,13 +94,14 @@
 
         ul {
             padding-left: 2rem;
+            margin-bottom: 1rem;
         }
 
         /* Specifické elementy */
         .color-demo {
             display: flex;
             gap: 20px;
-            margin-top: 20px;
+            margin-top: 10px;
             flex-wrap: wrap;
         }
 
@@ -207,6 +208,26 @@
             text-align: center;
         }
 
+        .warning-box {
+            background-color: #ffeaea;
+            border-left: 5px solid var(--accent-color);
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box h3 {
+            color: var(--accent-color);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .warning-box p {
+            margin-bottom: 0;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
         /* Responzivita pro menší obrazovky */
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
@@ -258,14 +279,13 @@
         <div class="slide">
             <h1>Náležitosti titulní strany</h1>
             <h2>Co tam nesmí chybět?</h2>
-            <p>Titulní snímek je vaše vizitka. Kdykoliv budete na střední škole odevzdávat prezentaci, ujistěte se, že obsahuje:</p>
+            <p>Titulní snímek je vaše vizitka. Prezentaci můžete vytvořit v <strong>libovolném nástroji</strong> (PowerPoint, Canva, Google Slides apod.), ale ujistěte se, že úvod obsahuje:</p>
             <ul>
                 <li><strong>Název tématu:</strong> Jasně, stručně, největším písmem.</li>
                 <li><strong>Jméno a příjmení autora/ů:</strong> Kdo na tom pracoval.</li>
                 <li><strong>Třída:</strong> Pro snadnou identifikaci (např. 1.A).</li>
                 <li><strong>Předmět:</strong> V rámci čeho prezentujete.</li>
                 <li><strong>Datum:</strong> Kdy prezentace probíhá.</li>
-                <li><strong>Škola:</strong> (Volitelně, ale působí to profesionálně).</li>
             </ul>
         </div>
 
@@ -273,23 +293,21 @@
         <div class="slide">
             <h1>Design: Volba barev a textu</h1>
             <h2>Méně je více (Pravidlo 6x6)</h2>
-            <p>Max. 6 bodů na slide, max. 6 slov na řádek. Nečtěte text z plátna, plátno je jen podpora!</p>
+            <p>Max. 6 bodů na slide, max. 6 slov na řádek. Používejte max 3 základní barvy.</p>
             
             <div class="color-demo">
                 <div class="color-box good-color">
                     <span>✅ Vhodné: Vysoký kontrast</span>
-                    <span style="font-size: 0.9rem; font-weight: normal; margin-top: 10px;">Tmavé pozadí, světlý text (nebo naopak). Dobře čitelné i ze zadní lavice.</span>
                 </div>
                 <div class="color-box bad-color">
                     <span>❌ Nevhodné: Nízký kontrast</span>
-                    <span style="font-size: 0.9rem; font-weight: normal; margin-top: 10px;">Světlý text na zářivém pozadí. Tahá to oči a není to vidět, když svítí slunce.</span>
                 </div>
             </div>
-            <ul style="margin-top: 20px;">
-                <li>Používejte max <strong>3 základní barvy</strong>.</li>
-                <li>Zvolte čisté fonty bez patek (např. Arial, Roboto, Calibri).</li>
-                <li>Vyhněte se divokým animacím a přechodům mezi snímky.</li>
-            </ul>
+            
+            <div class="warning-box">
+                <h3>⚠️ Pozor na "grafický odpad"!</h3>
+                <p>Zvolte čisté fonty. Pokud použijete font, který <strong>nepodporuje češtinu</strong> (háčky a čárky se zobrazují v jiném fontu/rozsypané), jde známka automaticky o <strong>dva stupně dolů!</strong></p>
+            </div>
         </div>
 
         <!-- SLIDE 5: Prezentace jako opora (ZÁKAZ ČTENÍ) -->
@@ -302,9 +320,9 @@
                 <li>Na plátno nepatří žádné dlouhé věty a souvislé odstavce.</li>
                 <li><strong>Nečtěte z plátna!</strong> Máte mluvit k publiku, oční kontakt je naprostý základ.</li>
             </ul>
-            <div style="background-color: #ffeaea; border-left: 5px solid var(--accent-color); padding: 20px; margin-top: 30px; border-radius: 0 8px 8px 0;">
-                <h3 style="color: var(--accent-color); margin-bottom: 10px;">⚠️ Přísné pravidlo hodnocení:</h3>
-                <p style="margin-bottom: 0; font-weight: bold;">Za každou přečtenou celou větu z prezentace (nepůjde-li o přiznaný citát) jde známka automaticky o stupeň dolů!</p>
+            <div class="warning-box">
+                <h3>⚠️ Přísné pravidlo hodnocení:</h3>
+                <p style="font-weight: bold;">Za každou přečtenou celou větu z prezentace (nepůjde-li o přiznaný citát) jde známka automaticky o stupeň dolů!</p>
             </div>
         </div>
 
@@ -314,10 +332,10 @@
             <h2>Časový limit a odbornost</h2>
             <p>Očekávám, že svému tématu budete rozumět a dokážete o něm mluvit vlastními slovy a s přehledem.</p>
             <ul>
-                <li><strong>Časový limit:</strong> Celková délka prezentace je <strong>4–6 minut</strong>. Vzhledem k práci ve dvojicích to znamená zhruba 2–3 minuty mluveného slova na osobu.</li>
-                <li><strong>Poctivá příprava:</strong> Prezentace vytvořené narychlo těsně před hodinou (např. prostým zkopírováním z Wikipedie) budou snadno odhaleny.</li>
-                <li><strong>Pochopení > Biflování:</strong> Pokud nějakému slovu nebo konceptu ve své prezentaci nerozumíte, nedávejte ho tam. Během prezentace se vás mohu na cokoliv doptat.</li>
-                <li><strong>Odbornost:</strong> Na vymezený čas se stáváte expertem na dané téma vy. Ukažte, co jste se dozvěděli.</li>
+                <li><strong>Časový limit:</strong> Celková délka <strong>MLUVENÉ</strong> prezentace je <strong>4–6 minut</strong>. Vzhledem k práci ve dvojicích to znamená zhruba 2–3 minuty mluveného slova na osobu.</li>
+                <li><strong>Ukázky a multimédia:</strong> Pokud budou ve vaší prezentaci ukázky videí nebo zvuků, do tohoto času se <strong>nezapočítávají</strong>.</li>
+                <li><strong>Poctivá příprava:</strong> Prezentace vytvořené narychlo těsně před hodinou budou snadno odhaleny.</li>
+                <li><strong>Pochopení > Biflování:</strong> Pokud nějakému slovu nebo konceptu nerozumíte, nedávejte ho tam. Během prezentace se vás mohu na cokoliv doptat.</li>
             </ul>
         </div>
 
@@ -389,3 +407,4 @@
     </script>
 </body>
 </html>
+```
