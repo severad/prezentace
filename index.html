@@ -1,410 +1,552 @@
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prezentační dovednosti a rozpis témat</title>
+    <title>Strukturální Varianty - Strom Dovedností</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- CSS STYLES --- */
-        :root {
-            --bg-color: #f4f4f9;
-            --text-color: #2b2d42;
-            --accent-color: #ef233c;
-            --secondary-color: #8d99ae;
-            --white: #ffffff;
-        }
-
-        * {
-            box-sizing: border-box;
+        body, html {
             margin: 0;
             padding: 0;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow: hidden; /* Skryje scrollbar pro efekt prezentace */
-        }
-
-        /* Kontejner pro slidy */
-        #presentation {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .slide {
-            position: absolute;
-            width: 80%;
-            max-width: 1000px;
-            height: 80%;
-            background: var(--white);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 3rem;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.5s ease-in-out;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            
-            /* Skrytí scrollbarů pro čistý design, ale zachování možnosti scrollování */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE a Edge */
-        }
-
-        /* Skrytí scrollbarů pro Chrome, Safari a Operu */
-        .slide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .slide.active {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-            z-index: 10;
-        }
-
-        /* Typografie */
-        h1 {
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            border-bottom: 3px solid var(--accent-color);
-            padding-bottom: 0.5rem;
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-color);
-        }
-
-        p, li, td, th {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-
-        ul {
-            padding-left: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Specifické elementy */
-        .color-demo {
-            display: flex;
-            gap: 20px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .color-box {
-            padding: 20px;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 250px;
-            text-align: center;
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .good-color { background: #2b2d42; color: #ffffff; }
-        .bad-color { background: #ffff00; color: #ffffff; border: 1px solid #ccc; } /* Schválně nečitelné */
-
-        /* Tabulky pro rozpis */
-        table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0f172a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        th, td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid var(--secondary-color);
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.5s ease;
         }
-
-        th {
-            background-color: var(--accent-color);
-            color: var(--white);
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .badge {
-            background: var(--secondary-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-        }
-
-        /* Ovládání */
-        .controls {
-            position: fixed;
-            bottom: 30px;
-            right: 50px;
-            z-index: 100;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            background: rgba(255,255,255,0.8);
-            padding: 10px 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        button {
-            background-color: var(--text-color);
-            color: var(--white);
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: var(--accent-color);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        #progress-container {
-            position: fixed;
+        #ui-layer {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
-            background: #ccc;
-            z-index: 100;
-        }
-
-        #progress-bar {
             height: 100%;
-            background: var(--accent-color);
-            width: 0%;
-            transition: width 0.3s ease;
+            pointer-events: none;
+        }
+        .pointer-events-auto {
+            pointer-events: auto;
         }
         
-        .center-content {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+        #tooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.2s, transform 0.2s;
+            max-width: 300px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+        #tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .warning-box {
-            background-color: #ffeaea;
-            border-left: 5px solid var(--accent-color);
-            padding: 15px 20px;
-            margin-top: 20px;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .warning-box h3 {
-            color: var(--accent-color);
-            margin-bottom: 8px;
-            font-size: 1.2rem;
-        }
-
-        .warning-box p {
-            margin-bottom: 0;
-            font-size: 1.1rem;
-            line-height: 1.4;
-        }
-
-        /* Responzivita pro menší obrazovky */
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            h2 { font-size: 1.5rem; }
-            p, li, td, th { font-size: 1rem; }
-            .slide { width: 95%; padding: 1.5rem; }
-            .controls { right: 50%; transform: translateX(50%); bottom: 10px; }
-            table { 
-                display: block; 
-                overflow-x: auto; 
-                white-space: nowrap; 
-                scrollbar-width: none; 
-                -ms-overflow-style: none; 
-            }
-            table::-webkit-scrollbar {
-                display: none;
-            }
-        }
+        ::-webkit-scrollbar { height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <div id="progress-container">
-        <div id="progress-bar"></div>
-    </div>
+    <canvas id="skillTreeCanvas"></canvas>
 
-    <div id="presentation">
-
-        <!-- SLIDE 1: Úvod -->
-        <div class="slide active center-content">
-            <h1>Zásady správné prezentace</h1>
-            <h2>Informatika / Multimédia - 1. ročník</h2>
-            <p>Naučte se prezentovat jako profesionálové. Jaká jsou pravidla a co se od vás očekává?</p>
-            <p style="color: var(--secondary-color); font-size: 1rem; margin-top: 2rem;">(Pro pohyb použijte šipky na klávesnici nebo tlačítka dole)</p>
-        </div>
-
-        <!-- SLIDE 2: Proč umět prezentovat -->
-        <div class="slide">
-            <h1>Proč je prezentování důležité?</h1>
-            <h2>Trh práce se změnil</h2>
-            <ul>
-                <li><strong>Odbornost nestačí:</strong> Dnes nestačí jen něco umět, musíte umět svůj nápad "prodat" a vysvětlit ostatním.</li>
-                <li><strong>Komunikace je top skill:</strong> Zaměstnavatelé hledají lidi, kteří dokážou složité věci vysvětlit jednoduše (tzv. soft skills).</li>
-                <li><strong>První dojem rozhoduje:</strong> Způsob, jakým zpracujete informace, ukazuje, jak přemýšlíte a jak jste pečliví.</li>
-            </ul>
-        </div>
-
-        <!-- SLIDE 3: Titulní strana -->
-        <div class="slide">
-            <h1>Náležitosti titulní strany</h1>
-            <h2>Co tam nesmí chybět?</h2>
-            <p>Titulní snímek je vaše vizitka. Prezentaci můžete vytvořit v <strong>libovolném nástroji</strong> (PowerPoint, Canva, Google Slides apod.), ale ujistěte se, že úvod obsahuje:</p>
-            <ul>
-                <li><strong>Název tématu:</strong> Jasně, stručně, největším písmem.</li>
-                <li><strong>Jméno a příjmení autora/ů:</strong> Kdo na tom pracoval.</li>
-                <li><strong>Třída:</strong> Pro snadnou identifikaci (např. 1.A).</li>
-                <li><strong>Předmět:</strong> V rámci čeho prezentujete.</li>
-                <li><strong>Datum:</strong> Kdy prezentace probíhá.</li>
-            </ul>
-        </div>
-
-        <!-- SLIDE 4: Barvy a design -->
-        <div class="slide">
-            <h1>Design: Volba barev a textu</h1>
-            <h2>Méně je více (Pravidlo 6x6)</h2>
-            <p>Max. 6 bodů na slide, max. 6 slov na řádek. Používejte max 3 základní barvy.</p>
-            
-            <div class="color-demo">
-                <div class="color-box good-color">
-                    <span>✅ Vhodné: Vysoký kontrast</span>
-                </div>
-                <div class="color-box bad-color">
-                    <span>❌ Nevhodné: Nízký kontrast</span>
-                </div>
-            </div>
-            
-            <div class="warning-box">
-                <h3>⚠️ Pozor na "grafický odpad"!</h3>
-                <p>Zvolte čisté fonty. Pokud použijete font, který <strong>nepodporuje češtinu</strong> (háčky a čárky se zobrazují v jiném fontu/rozsypané), jde známka automaticky o <strong>dva stupně dolů!</strong></p>
-            </div>
-        </div>
-
-        <!-- SLIDE 5: Prezentace jako opora (ZÁKAZ ČTENÍ) -->
-        <div class="slide">
-            <h1>Prezentace je jen opora!</h1>
-            <h2>Hesla, ne romány</h2>
-            <p>Plátno slouží jako osnova pro vás a vizuální podpora pro diváky. Nikdy na něj nepište dlouhé texty.</p>
-            <ul>
-                <li>Pište pouze <strong>heslovitě</strong> a v odrážkách.</li>
-                <li>Na plátno nepatří žádné dlouhé věty a souvislé odstavce.</li>
-                <li><strong>Nečtěte z plátna!</strong> Máte mluvit k publiku, oční kontakt je naprostý základ.</li>
-            </ul>
-            <div class="warning-box">
-                <h3>⚠️ Přísné pravidlo hodnocení:</h3>
-                <p style="font-weight: bold;">Za každou přečtenou celou větu z prezentace (nepůjde-li o přiznaný citát) jde známka automaticky o stupeň dolů!</p>
-            </div>
-        </div>
-
-        <!-- SLIDE 6: Znalost tématu -->
-        <div class="slide">
-            <h1>Znalost tématu a organizace</h1>
-            <h2>Časový limit a odbornost</h2>
-            <p>Očekávám, že svému tématu budete rozumět a dokážete o něm mluvit vlastními slovy a s přehledem.</p>
-            <ul>
-                <li><strong>Časový limit:</strong> Celková délka <strong>MLUVENÉ</strong> prezentace je <strong>4–6 minut</strong>. Vzhledem k práci ve dvojicích to znamená zhruba 2–3 minuty mluveného slova na osobu.</li>
-                <li><strong>Ukázky a multimédia:</strong> Pokud budou ve vaší prezentaci ukázky videí nebo zvuků, do tohoto času se <strong>nezapočítávají</strong>.</li>
-                <li><strong>Poctivá příprava:</strong> Prezentace vytvořené narychlo těsně před hodinou budou snadno odhaleny.</li>
-                <li><strong>Pochopení > Biflování:</strong> Pokud nějakému slovu nebo konceptu nerozumíte, nedávejte ho tam. Během prezentace se vás mohu na cokoliv doptat.</li>
-            </ul>
-        </div>
-
-    </div>
-
-    <!-- OVLÁDACÍ PRVKY -->
-    <div class="controls">
-        <span id="slide-counter" style="margin-right: 15px; font-weight: bold;">1 / X</span>
-        <button id="prevBtn" onclick="prevSlide()">Předchozí</button>
-        <button id="nextBtn" onclick="nextSlide()">Další</button>
-    </div>
-
-    <script>
-        /* --- JAVASCRIPT LOGIC --- */
-        const slides = document.querySelectorAll('.slide');
-        const nextBtn = document.getElementById('nextBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const counter = document.getElementById('slide-counter');
-        const progressBar = document.getElementById('progress-bar');
+    <div id="ui-layer" class="flex flex-col justify-between p-4 md:p-6">
         
-        let currentSlide = 0;
+        <!-- Hlavička -->
+        <div class="text-center pointer-events-auto bg-black/30 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-lg max-w-2xl mx-auto w-full">
+            <h1 class="text-2xl md:text-3xl font-bold text-white mb-1" id="main-title">Struktura Studia</h1>
+            <p class="text-gray-300 text-xs md:text-sm" id="sub-title">Vyber dole variantu rozložení průchodu. Klikáním odemykáš semináře.</p>
+            <button id="reset-btn" class="mt-3 px-3 py-1 bg-red-500/80 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition-colors">RESET POSTUPU</button>
+        </div>
 
-        function updateSlides() {
-            // Odebrání active class všem
-            slides.forEach(slide => slide.classList.remove('active'));
-            
-            // Přidání active class na aktuální
-            slides[currentSlide].classList.add('active');
-            
-            // Update počítadla
-            counter.innerText = `${currentSlide + 1} / ${slides.length}`;
-            
-            // Update progress baru
-            const progress = (currentSlide / (slides.length - 1)) * 100;
-            progressBar.style.width = `${progress}%`;
+        <!-- Tooltip -->
+        <div id="tooltip">
+            <div class="text-xs font-bold uppercase tracking-wider text-blue-400 mb-1" id="tt-year">Ročník</div>
+            <h3 class="text-lg md:text-xl font-bold mb-2" id="tt-title">Název</h3>
+            <p class="text-xs md:text-sm text-gray-300 leading-relaxed" id="tt-desc">Popis</p>
+            <div class="mt-3 text-xs font-semibold text-right" id="tt-status">Stav</div>
+        </div>
 
-            // Tlačítka stav
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
+        <!-- Přepínač rozložení -->
+        <div class="pointer-events-auto bg-black/50 backdrop-blur-lg border border-white/20 p-3 md:p-4 rounded-2xl mx-auto max-w-6xl overflow-x-auto w-full shadow-2xl">
+            <div class="text-[10px] md:text-xs text-gray-400 uppercase tracking-widest text-center mb-2 md:mb-3">Tvary a směry průchodů (Varianty 1 - 8)</div>
+            <div class="flex gap-2 justify-center min-w-max" id="variant-buttons">
+                <!-- Tlačítka se vygenerují automaticky -->
+            </div>
+        </div>
+
+    </div>
+
+<script>
+/**
+ * 8 STRUKTURÁLNÍCH VARIANT STROMU
+ * Každá varianta definuje přesné souřadnice uzlů (x, y),
+ * tvar spojovacích čar (vertikální/horizontální/přímé) a orientační osy.
+ */
+const variants = [
+    {
+        name: "Shora Dolů",
+        theme: { bg: "#0f172a", lineOff: "#334155", lineOn: "#3b82f6", nodeLocked: "#1e293b", nodeAvail: "#3b82f6", nodeUnlocked: "#10b981", text: "#f8fafc", shape: "circle" },
+        curveStyle: "vertical", yearGuides: "horizontal",
+        pos: {
+            zIT:   { x: 0.5, y: 0.15 },
+            fe:    { x: 0.3, y: 0.40 }, arch:  { x: 0.7, y: 0.40 },
+            graf3: { x: 0.2, y: 0.65 }, sw3:   { x: 0.5, y: 0.65 }, os3:   { x: 0.8, y: 0.65 },
+            graf4: { x: 0.2, y: 0.90 }, sw4:   { x: 0.5, y: 0.90 }, net4:  { x: 0.8, y: 0.90 }
         }
-
-        // Posun vpřed
-        window.nextSlide = function() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                updateSlides();
-            }
+    },
+    {
+        name: "Časová Osa (Zleva)",
+        theme: { bg: "#f8fafc", lineOff: "#cbd5e1", lineOn: "#0ea5e9", nodeLocked: "#e2e8f0", nodeAvail: "#0ea5e9", nodeUnlocked: "#0f172a", text: "#0f172a", shape: "roundrect" },
+        curveStyle: "horizontal", yearGuides: "vertical",
+        pos: {
+            zIT:   { x: 0.15, y: 0.5 },
+            fe:    { x: 0.40, y: 0.25 }, arch: { x: 0.40, y: 0.75 },
+            graf3: { x: 0.65, y: 0.15 }, sw3:  { x: 0.65, y: 0.5 }, os3:   { x: 0.65, y: 0.85 },
+            graf4: { x: 0.90, y: 0.15 }, sw4:  { x: 0.90, y: 0.5 }, net4:  { x: 0.90, y: 0.85 }
         }
-
-        // Posun vzad
-        window.prevSlide = function() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                updateSlides();
-            }
+    },
+    {
+        name: "Růst (Zdola Nahoru)",
+        theme: { bg: "#14532d", lineOff: "#166534", lineOn: "#86efac", nodeLocked: "#166534", nodeAvail: "#fde047", nodeUnlocked: "#86efac", text: "#ecfdf5", shape: "leaf" },
+        curveStyle: "vertical", yearGuides: "horizontal",
+        pos: {
+            zIT:   { x: 0.5, y: 0.85 },
+            fe:    { x: 0.35, y: 0.60 }, arch: { x: 0.65, y: 0.60 },
+            graf3: { x: 0.2, y: 0.35 }, sw3:   { x: 0.5, y: 0.35 }, os3:   { x: 0.8, y: 0.35 },
+            graf4: { x: 0.15, y: 0.10 }, sw4:  { x: 0.5, y: 0.10 }, net4:  { x: 0.85, y: 0.10 }
         }
+    },
+    {
+        name: "Radiální Centrum",
+        theme: { bg: "#020617", lineOff: "#1e1b4b", lineOn: "#c084fc", nodeLocked: "#0f172a", nodeAvail: "#38bdf8", nodeUnlocked: "#c084fc", text: "#f8fafc", shape: "star" },
+        curveStyle: "straight", yearGuides: "none",
+        pos: {
+            zIT:   { x: 0.5, y: 0.5 },
+            fe:    { x: 0.3, y: 0.5 },  arch:  { x: 0.7, y: 0.5 },
+            graf3: { x: 0.2, y: 0.25 }, sw3:   { x: 0.5, y: 0.2 },  os3:   { x: 0.8, y: 0.25 },
+            graf4: { x: 0.1, y: 0.1 },  sw4:   { x: 0.5, y: 0.05 }, net4:  { x: 0.9, y: 0.1 }
+        }
+    },
+    {
+        name: "Hadovitý Meandr",
+        theme: { bg: "#000000", lineOff: "#333333", lineOn: "#39ff14", nodeLocked: "#111111", nodeAvail: "#ff9900", nodeUnlocked: "#39ff14", text: "#39ff14", shape: "square" },
+        curveStyle: "straight", yearGuides: "none",
+        pos: {
+            zIT:   { x: 0.2, y: 0.2 },
+            fe:    { x: 0.5, y: 0.2 }, arch:   { x: 0.8, y: 0.2 },
+            os3:   { x: 0.8, y: 0.5 }, sw3:    { x: 0.5, y: 0.5 }, graf3: { x: 0.2, y: 0.5 },
+            graf4: { x: 0.2, y: 0.8 }, sw4:    { x: 0.5, y: 0.8 }, net4:  { x: 0.8, y: 0.8 }
+        }
+    },
+    {
+        name: "Diagonální Kaskáda",
+        theme: { bg: "#2d3748", lineOff: "#4a5568", lineOn: "#f6ad55", nodeLocked: "#1a202c", nodeAvail: "#f6ad55", nodeUnlocked: "#48bb78", text: "#edf2f7", shape: "circle" },
+        curveStyle: "horizontal", yearGuides: "none",
+        pos: {
+            zIT:   { x: 0.15, y: 0.15 },
+            fe:    { x: 0.30, y: 0.40 }, arch: { x: 0.45, y: 0.15 },
+            graf3: { x: 0.45, y: 0.65 }, sw3:  { x: 0.60, y: 0.40 }, os3:   { x: 0.75, y: 0.15 },
+            graf4: { x: 0.60, y: 0.90 }, sw4:  { x: 0.75, y: 0.65 }, net4:  { x: 0.90, y: 0.40 }
+        }
+    },
+    {
+        name: "Technická Mřížka",
+        theme: { bg: "#1e3a8a", lineOff: "#3b82f6", lineOn: "#ffffff", nodeLocked: "#1e3a8a", nodeAvail: "#60a5fa", nodeUnlocked: "#ffffff", text: "#ffffff", shape: "rect" },
+        curveStyle: "straight", yearGuides: "none",
+        pos: {
+            zIT:   { x: 0.50, y: 0.15 },
+            fe:    { x: 0.35, y: 0.35 }, arch: { x: 0.65, y: 0.35 },
+            graf3: { x: 0.20, y: 0.60 }, sw3:  { x: 0.50, y: 0.60 }, os3:   { x: 0.80, y: 0.60 },
+            graf4: { x: 0.20, y: 0.85 }, sw4:  { x: 0.50, y: 0.85 }, net4:  { x: 0.80, y: 0.85 }
+        }
+    },
+    {
+        name: "Mind-Mapa",
+        theme: { bg: "#09090b", lineOff: "#27272a", lineOn: "#f472b6", nodeLocked: "#18181b", nodeAvail: "#2dd4bf", nodeUnlocked: "#f472b6", text: "#e4e4e7", shape: "circle" },
+        curveStyle: "horizontal", yearGuides: "none",
+        pos: {
+            zIT:   { x: 0.50, y: 0.50 },
+            fe:    { x: 0.25, y: 0.30 }, arch: { x: 0.75, y: 0.30 },
+            graf3: { x: 0.15, y: 0.60 }, sw3:  { x: 0.35, y: 0.70 }, os3:   { x: 0.85, y: 0.60 },
+            graf4: { x: 0.10, y: 0.85 }, sw4:  { x: 0.45, y: 0.90 }, net4:  { x: 0.90, y: 0.85 }
+        }
+    }
+];
 
-        // Event listenery pro šipky na klávesnici
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                prevSlide();
+let currentVar = variants[0];
+
+/** Logická struktura uzlů a prerekvizit */
+const baseData = [
+    { id: "zIT", rocnik: 1, title: "Základy IT", desc: "Získávání přehledu o IT. Všeobecný základ.", req: [], status: "available" },
+    { id: "fe", rocnik: 2, title: "Front-end vývoj", desc: "Směr pro grafiky a webaře. HTML, CSS, UI/UX.", req: ["zIT"], status: "locked" },
+    { id: "arch", rocnik: 2, title: "Architektura PC", desc: "Směr pro programátory a síťaře. Jak PC funguje uvnitř.", req: ["zIT"], status: "locked" },
+    { id: "graf3", rocnik: 3, title: "Grafika I.", desc: "Specializace. Vektorová a rastrová grafika.", req: ["fe"], status: "locked" },
+    { id: "sw3", rocnik: 3, title: "Vývoj Software I.", desc: "Pro programátory. Algoritmy, kódování.", req: ["arch"], status: "locked" },
+    { id: "os3", rocnik: 3, title: "Operační systémy", desc: "Pro síťaře. Hlubší porozumění OS (Linux/Win).", req: ["arch"], status: "locked" },
+    { id: "graf4", rocnik: 4, title: "Grafika II.", desc: "3D modelování, animace a příprava portfolia.", req: ["graf3"], status: "locked" },
+    { id: "sw4", rocnik: 4, title: "Vývoj Software II.", desc: "Pokročilé programování, databáze a praxe.", req: ["sw3"], status: "locked" },
+    { id: "net4", rocnik: 4, title: "Počítačové sítě", desc: "Sítě, routery, protokoly a bezpečnost.", req: ["os3"], status: "locked" }
+];
+
+// Canvas Setup
+const canvas = document.getElementById('skillTreeCanvas');
+const ctx = canvas.getContext('2d');
+let width, height;
+
+// State
+let nodes = [];
+let hoveredNode = null;
+let animationTime = 0;
+
+// Initialize
+function init() {
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Připravit uzly - naklonovat data a nastavit počáteční a cílové pozice
+    nodes = JSON.parse(JSON.stringify(baseData));
+    nodes.forEach(n => {
+        n.x = 0.5; n.y = 0.5; // Start ze středu pro efektní první rozlet
+        n.targetX = currentVar.pos[n.id].x;
+        n.targetY = currentVar.pos[n.id].y;
+    });
+    
+    setupUI();
+    setupEvents();
+    requestAnimationFrame(render);
+}
+
+function resizeCanvas() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+}
+
+function setupUI() {
+    const container = document.getElementById('variant-buttons');
+    container.innerHTML = '';
+    
+    variants.forEach((vrnt, index) => {
+        const btn = document.createElement('button');
+        btn.className = `px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition-all border-2 whitespace-nowrap ${index === 0 ? 'border-white bg-white/30 text-white' : 'border-transparent bg-white/10 hover:bg-white/20 text-gray-300'}`;
+        btn.innerText = `${index + 1}. ${vrnt.name}`;
+        
+        btn.onclick = () => {
+            currentVar = vrnt;
+            
+            // Změna barev nadpisů podle pozadí
+            const isLightBg = (vrnt.theme.bg === '#f8fafc' || vrnt.theme.bg === '#eceff1');
+            document.getElementById('main-title').style.color = isLightBg ? '#0f172a' : '#ffffff';
+            document.getElementById('sub-title').style.color = isLightBg ? '#334155' : '#d1d5db';
+            canvas.style.backgroundColor = vrnt.theme.bg;
+
+            // Aktivní stav tlačítek
+            Array.from(container.children).forEach(c => {
+                c.className = `px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition-all border-2 whitespace-nowrap border-transparent bg-white/10 hover:bg-white/20 text-gray-300`;
+            });
+            btn.className = `px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition-all border-2 whitespace-nowrap border-white bg-white/30 text-white`;
+
+            // Spuštění animace pohybu uzlů do nové struktury
+            nodes.forEach(n => {
+                n.targetX = currentVar.pos[n.id].x;
+                n.targetY = currentVar.pos[n.id].y;
+            });
+        };
+        container.appendChild(btn);
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+        // Resetujeme jen stavy, pozice zachováme
+        const savedTargets = nodes.map(n => ({x: n.targetX, y: n.targetY, currX: n.x, currY: n.y}));
+        nodes = JSON.parse(JSON.stringify(baseData));
+        nodes.forEach((n, i) => {
+            n.targetX = savedTargets[i].x; n.targetY = savedTargets[i].y;
+            n.x = savedTargets[i].currX; n.y = savedTargets[i].currY;
+        });
+        updateLogic();
+    });
+}
+
+function setupEvents() {
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        hoveredNode = null;
+        let tooltipNode = null;
+
+        nodes.forEach(node => {
+            const nx = node.x * width;
+            const ny = node.y * height;
+            const dist = Math.sqrt(Math.pow(mouseX - nx, 2) + Math.pow(mouseY - ny, 2));
+            if (dist < 40) {
+                hoveredNode = node;
+                tooltipNode = node;
             }
         });
 
-        // Inicializace
-        updateSlides();
-    </script>
+        canvas.style.cursor = hoveredNode && hoveredNode.status !== 'locked' ? 'pointer' : 'default';
+        updateTooltip(tooltipNode, e.clientX, e.clientY);
+    });
+
+    canvas.addEventListener('click', () => {
+        if (hoveredNode) {
+            if (hoveredNode.status === 'available') {
+                hoveredNode.status = 'unlocked';
+                updateLogic();
+            } else if (hoveredNode.status === 'unlocked' && hoveredNode.id !== 'zIT') {
+                const hasUnlockedChildren = nodes.some(n => n.req.includes(hoveredNode.id) && n.status === 'unlocked');
+                if(!hasUnlockedChildren) {
+                    hoveredNode.status = 'available';
+                    updateLogic();
+                }
+            }
+        }
+    });
+}
+
+function updateTooltip(node, x, y) {
+    const tt = document.getElementById('tooltip');
+    if (node) {
+        document.getElementById('tt-year').innerText = `${node.rocnik}. ROČNÍK`;
+        document.getElementById('tt-title').innerText = node.title;
+        document.getElementById('tt-desc').innerText = node.desc;
+        
+        let stText = "", stColor = "";
+        if(node.status === 'locked') { stText = "🔒 Uzamčeno (Nejprve splňte předchozí)"; stColor = "#ef4444"; }
+        if(node.status === 'available') { stText = "⚡ Kliknutím zvolit seminář"; stColor = "#3b82f6"; }
+        if(node.status === 'unlocked') { stText = "✅ Vybráno"; stColor = "#10b981"; }
+        
+        const stEl = document.getElementById('tt-status');
+        stEl.innerText = stText;
+        stEl.style.color = stColor;
+
+        tt.classList.add('visible');
+        
+        let px = x + 20, py = y + 20;
+        if (px + 300 > window.innerWidth) px = x - 320;
+        if (py + 150 > window.innerHeight) py = y - 170;
+        tt.style.left = `${px}px`; tt.style.top = `${py}px`;
+    } else {
+        tt.classList.remove('visible');
+    }
+}
+
+function updateLogic() {
+    nodes.forEach(node => {
+        if (node.id === 'zIT' && node.status === 'locked') node.status = 'available';
+        if (node.req.length > 0) {
+            const parents = nodes.filter(n => node.req.includes(n.id));
+            const allParentsUnlocked = parents.every(p => p.status === 'unlocked');
+            if (allParentsUnlocked && node.status === 'locked') node.status = 'available';
+            else if (!allParentsUnlocked && (node.status === 'available' || node.status === 'unlocked')) node.status = 'locked';
+        }
+    });
+}
+
+// --- VYKRESLOVÁNÍ ---
+
+function drawGuides() {
+    ctx.font = `bold 16px sans-serif`;
+    ctx.fillStyle = currentVar.theme.lineOff;
+    const isLight = (currentVar.theme.bg === '#f8fafc');
+    ctx.strokeStyle = isLight ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.05)";
+    ctx.lineWidth = 2;
+
+    if (currentVar.yearGuides === 'horizontal') {
+        ctx.textAlign = "left";
+        const guides = [0.15, 0.40, 0.65, 0.90]; // Odpovídá top-down y pozicím
+        guides.forEach((val, i) => {
+            const y = val * height;
+            ctx.fillText(`${i+1}. ROČNÍK`, 20, y);
+            ctx.beginPath(); ctx.moveTo(120, y - 5); ctx.lineTo(width - 20, y - 5); ctx.stroke();
+        });
+    } else if (currentVar.yearGuides === 'vertical') {
+        ctx.textAlign = "center";
+        const guides = [0.15, 0.40, 0.65, 0.90]; // Odpovídá left-right x pozicím
+        guides.forEach((val, i) => {
+            const x = val * width;
+            ctx.fillText(`${i+1}. ROČNÍK`, x, 120);
+            ctx.beginPath(); ctx.moveTo(x, 140); ctx.lineTo(x, height - 20); ctx.stroke();
+        });
+    }
+    // "none" nekreslí nic
+}
+
+function drawLine(n1, n2, isActive) {
+    const x1 = n1.x * width, y1 = n1.y * height;
+    const x2 = n2.x * width, y2 = n2.y * height;
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    
+    // Tvarování spojnic (rozdíl mezi architekturami)
+    if (currentVar.curveStyle === 'vertical') {
+        const ctrlY = (y1 + y2) / 2;
+        ctx.bezierCurveTo(x1, ctrlY, x2, ctrlY, x2, y2);
+    } else if (currentVar.curveStyle === 'horizontal') {
+        const ctrlX = (x1 + x2) / 2;
+        ctx.bezierCurveTo(ctrlX, y1, ctrlX, y2, x2, y2);
+    } else {
+        // 'straight'
+        ctx.lineTo(x2, y2);
+    }
+
+    ctx.lineWidth = isActive ? 4 : 2;
+    ctx.strokeStyle = isActive ? currentVar.theme.lineOn : currentVar.theme.lineOff;
+
+    if (isActive && currentVar.name !== "Technická Mřížka") {
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = currentVar.theme.lineOn;
+    } else {
+        ctx.shadowBlur = 0;
+    }
+
+    if (currentVar.name === "Technická Mřížka") {
+        ctx.setLineDash([5, 5]);
+    } else {
+        ctx.setLineDash([]);
+    }
+
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.setLineDash([]);
+}
+
+function drawNodeShape(x, y, radius, color, isHovered, isPulsing) {
+    ctx.fillStyle = currentVar.theme.bg;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isHovered ? 5 : 3;
+
+    if (currentVar.name !== "Technická Mřížka") {
+        ctx.shadowBlur = isPulsing ? 20 + Math.sin(animationTime) * 10 : 10;
+        ctx.shadowColor = color;
+    }
+
+    ctx.beginPath();
+    const r = isHovered ? radius * 1.1 : radius;
+    const shape = currentVar.theme.shape;
+
+    if (shape === 'circle') {
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+    } else if (shape === 'rect') {
+        ctx.rect(x - r, y - r*0.7, r*2, r*1.4);
+    } else if (shape === 'square') {
+        ctx.rect(x - r, y - r, r*2, r*2);
+    } else if (shape === 'roundrect') {
+        ctx.roundRect(x - r, y - r*0.8, r*2, r*1.6, 10);
+    } else if (shape === 'leaf') {
+        ctx.moveTo(x, y - r);
+        ctx.quadraticCurveTo(x + r, y - r, x + r, y);
+        ctx.quadraticCurveTo(x + r, y + r, x, y + r);
+        ctx.quadraticCurveTo(x - r, y + r, x - r, y);
+        ctx.quadraticCurveTo(x - r, y - r, x, y - r);
+    } else if (shape === 'star') {
+        for (let i = 0; i < 5; i++) {
+            ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * r + x, -Math.sin((18 + i * 72) / 180 * Math.PI) * r + y);
+            ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * (r*0.5) + x, -Math.sin((54 + i * 72) / 180 * Math.PI) * (r*0.5) + y);
+        }
+        ctx.closePath();
+    }
+
+    ctx.fill();
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+}
+
+function render() {
+    animationTime += 0.05;
+
+    // Fyzika pro plynulý přesun uzlů při změně varianty
+    nodes.forEach(n => {
+        n.x += (n.targetX - n.x) * 0.08;
+        n.y += (n.targetY - n.y) * 0.08;
+    });
+
+    ctx.clearRect(0, 0, width, height);
+
+    drawGuides();
+
+    // Čáry
+    nodes.forEach(node => {
+        if (node.req.length > 0) {
+            node.req.forEach(reqId => {
+                const parent = nodes.find(n => n.id === reqId);
+                if (parent) {
+                    const isActive = parent.status === 'unlocked' && (node.status === 'unlocked' || node.status === 'available');
+                    drawLine(parent, node, isActive);
+                }
+            });
+        }
+    });
+
+    // Uzly
+    nodes.forEach(node => {
+        const nx = node.x * width;
+        const ny = node.y * height;
+        const isHovered = hoveredNode && hoveredNode.id === node.id;
+        const isPulsing = node.status === 'available';
+
+        let color = currentVar.theme.nodeLocked;
+        if (node.status === 'available') color = currentVar.theme.nodeAvail;
+        if (node.status === 'unlocked') color = currentVar.theme.nodeUnlocked;
+
+        drawNodeShape(nx, ny, 28, color, isHovered, isPulsing);
+
+        // Text
+        ctx.font = `13px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        
+        let textColor = currentVar.theme.text;
+        const isLight = (currentVar.theme.bg === '#f8fafc');
+        if (node.status === 'locked') {
+             textColor = isLight ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.4)";
+        }
+        ctx.fillStyle = textColor;
+        
+        // Zalamování textu
+        const words = node.title.split(" ");
+        if (words.length > 1) {
+            ctx.fillText(words[0], nx, ny + 45);
+            ctx.fillText(words.slice(1).join(" "), nx, ny + 60);
+        } else {
+            ctx.fillText(node.title, nx, ny + 45);
+        }
+
+        // Ikony uvnitř tvarů
+        ctx.font = `18px sans-serif`;
+        if (node.status === 'locked') ctx.fillText("🔒", nx, ny);
+        if (node.status === 'available') ctx.fillText("⚡", nx, ny);
+        if (node.status === 'unlocked') ctx.fillText("✓", nx, ny);
+    });
+
+    requestAnimationFrame(render);
+}
+
+// Start
+init();
+
+</script>
 </body>
 </html>
+
+
 ```
